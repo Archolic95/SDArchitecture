@@ -23,7 +23,7 @@ def seed_everything(seed):
     #torch.backends.cudnn.benchmark = True
 
 class StableDiffusion(nn.Module):
-    def __init__(self, device, fp16, vram_O, sd_version='2.1', hf_key=None, t_range=[0.02, 0.98]):
+    def __init__(self, device, fp16, vram_O, sd_version='2.1', hf_key=None, from_single_file=False, single_file_url=None, t_range=[0.02, 0.98]):
         super().__init__()
 
         self.device = device
@@ -45,8 +45,13 @@ class StableDiffusion(nn.Module):
 
         self.precision_t = torch.float16 if fp16 else torch.float32
 
-        # Create model
-        pipe = StableDiffusionPipeline.from_pretrained(model_key, torch_dtype=self.precision_t)
+        if from_single_file and single_file_url is not None:
+            # Initialize SD model from customized file/pipeline
+            pipe = StableDiffusionPipeline.from_single_file(single_file_url, torch_dtype=self.precision_t)
+        else:
+            # Create model
+            pipe = StableDiffusionPipeline.from_pretrained(model_key, torch_dtype=self.precision_t)
+            
 
         if vram_O:
             pipe.enable_sequential_cpu_offload()

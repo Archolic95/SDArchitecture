@@ -87,6 +87,8 @@ if __name__ == '__main__':
     parser.add_argument('--optim', type=str, default='adan', choices=['adan', 'adam'], help="optimizer")
     parser.add_argument('--sd_version', type=str, default='2.1', choices=['1.5', '2.0', '2.1'], help="stable diffusion version")
     parser.add_argument('--hf_key', type=str, default=None, help="hugging face Stable diffusion model key")
+    parser.add_argument('--from_single_file', type=bool, default=False, help="hugging face Stable diffusion model key")
+    parser.add_argument('--single_file_url', type=str, default=None, help="hugging face Stable diffusion model key")
     # try this if CUDA OOM
     parser.add_argument('--fp16', action='store_true', help="use float16 for training")
     parser.add_argument('--vram_O', action='store_true', help="optimization for low VRAM usage")
@@ -379,7 +381,7 @@ if __name__ == '__main__':
 
         if 'SD' in opt.guidance:
             from guidance.sd_utils import StableDiffusion
-            guidance['SD'] = StableDiffusion(device, opt.fp16, opt.vram_O, opt.sd_version, opt.hf_key, opt.t_range)
+            guidance['SD'] = StableDiffusion(device, opt.fp16, opt.vram_O, opt.sd_version, opt.hf_key, opt.from_single_file, opt.single_file_url, opt.t_range)
 
         if 'IF' in opt.guidance:
             from guidance.if_utils import IF
